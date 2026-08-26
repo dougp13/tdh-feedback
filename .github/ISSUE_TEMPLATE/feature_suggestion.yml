@@ -1,0 +1,79 @@
+name: Feature suggestion
+description: Suggest a new feature or improvement for This Dang House
+title: "[Feature]: "
+labels: ["needs-triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to suggest a feature. The more concrete
+        you are about the *problem* you're hitting, the faster this can
+        turn into a real change — vague requests get sent back with
+        clarifying questions before anything happens.
+
+  - type: dropdown
+    id: platform
+    attributes:
+      label: Which app does this affect?
+      options:
+        - iOS app
+        - Web app (danghouse.com)
+        - Both / not sure
+    validations:
+      required: true
+
+  - type: dropdown
+    id: area
+    attributes:
+      label: Which part of the app?
+      options:
+        - Dashboard
+        - Items & Tasks
+        - Lists
+        - Helpers
+        - Notifications
+        - Settings / Account
+        - AI suggestions
+        - Marketing site / signup
+        - Something else
+    validations:
+      required: true
+
+  - type: input
+    id: summary
+    attributes:
+      label: One-line summary
+      placeholder: "e.g. Let me snooze a task reminder for a week"
+    validations:
+      required: true
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: What problem does this solve?
+      description: What are you trying to do, and what happens today instead?
+      placeholder: "When I..., I expect..., but instead..."
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Describe the feature you'd like
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives or workarounds you've tried
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Before submitting
+      options:
+        - label: I searched existing issues and didn't find a duplicate
+          required: true

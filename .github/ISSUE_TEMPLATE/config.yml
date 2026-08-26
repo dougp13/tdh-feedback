@@ -1,0 +1,5 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Existing suggestions
+    url: https://github.com/dougp13/tdh-feedback/issues?q=is%3Aissue
+    about: Check whether someone already suggested this before opening a new one.
