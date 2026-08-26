@@ -108,7 +108,7 @@ jobs:
           claude_args: |
             --max-turns 12
             --model claude-sonnet-5
-            --allowedTools "Bash(gh issue comment:*),Bash(gh issue edit:*),Bash(.github/scripts/create-target-issue.sh:*)"
+            --allowedTools "Bash(gh issue view:*),Bash(gh issue comment:*),Bash(gh issue edit:*),Bash(.github/scripts/create-target-issue.sh:*)"
           settings: |
             {
               "env": {
