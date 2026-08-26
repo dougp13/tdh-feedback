@@ -106,7 +106,7 @@ jobs:
             for this one submission.
           claude_args: |
             --max-turns 12
-            --model claude-sonnet-5
+            --model claude-haiku-4-5-20251001
             --allowedTools "Bash(gh issue view:*),Bash(gh issue comment:*),Bash(gh issue edit:*),Bash(.github/scripts/create-target-issue.sh:*)"
           settings: |
             {
