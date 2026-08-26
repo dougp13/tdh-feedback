@@ -68,15 +68,17 @@ jobs:
 
             3. If NOT clear enough:
                - Post ONE comment on this issue asking 1-3 specific
-                 clarifying questions.
+                 clarifying questions:
+                 gh issue comment ${{ github.event.issue.number }} --body "<questions>"
                - Do not change any labels.
                - Stop. Do not create any issue anywhere.
 
             4. If clear enough:
                a. Write a groomed spec: a short imperative title, a Scope
                   section, and an Acceptance Criteria section (a checklist
-                  of concrete, testable statements).
-               b. TEMPORARY ROLLOUT-TESTING RESTRICTION: always route to
+                  of concrete, testable statements), ending with the line
+                  "Original suggestion: dougp13/tdh-feedback#${{ github.event.issue.number }}".
+               b. TEMPORARY ROLLOUT-TESTING RESTRICTION: always target
                   dougp13/this-dang-house-ios only, regardless of the
                   "platform" field, even if the request sounds backend-only
                   or web-only. Note this restriction explicitly in the
@@ -84,18 +86,20 @@ jobs:
                   pipeline rollout testing"). This restriction will be
                   lifted once the developer agent is verified working in
                   both target repos — do not lift it yourself.
-               c. Create the issue using:
-                  GH_TOKEN=${{ steps.app-token.outputs.token }} gh issue create \
-                    --repo dougp13/this-dang-house-ios \
-                    --title "<groomed title>" \
-                    --label groomed \
-                    --body "<groomed spec, ending with:
-                      'Original suggestion: dougp13/tdh-feedback#${{ github.event.issue.number }}'>"
-                  Never pass any --repo other than dougp13/this-dang-house-ios,
-                  and never any flag other than --repo/--title/--label/--body.
-               d. Add the "groomed" label to this original issue (removing
-                  "needs-triage"), and post one comment here linking to
-                  the issue you just created.
+               c. Create the issue by running the helper script (do NOT use
+                  `gh issue create` directly for this — you don't have and
+                  don't need the cross-repo token, the script has it):
+                  .github/scripts/create-target-issue.sh dougp13/this-dang-house-ios "<groomed title>" <<'BODY'
+                  <groomed spec>
+                  BODY
+                  Never pass any repo other than dougp13/this-dang-house-ios
+                  as the script's first argument.
+               d. Add the "groomed" label to this original issue and remove
+                  "needs-triage":
+                  gh issue edit ${{ github.event.issue.number }} --add-label groomed --remove-label needs-triage
+               e. Post one comment on this issue linking to the issue you
+                  just created:
+                  gh issue comment ${{ github.event.issue.number }} --body "<link>"
 
             Never: merge anything, close this issue, delete anything, edit
             any file in this repository, or create more than 1 issue total
@@ -103,10 +107,10 @@ jobs:
           claude_args: |
             --max-turns 12
             --model claude-sonnet-5
-            --allowedTools "Bash(gh issue comment:*),Bash(gh issue edit:*),Bash(gh issue create:*)"
+            --allowedTools "Bash(gh issue comment:*),Bash(gh issue edit:*),Bash(.github/scripts/create-target-issue.sh:*)"
           settings: |
             {
               "env": {
-                "GH_TOKEN": "${{ steps.app-token.outputs.token }}"
+                "CROSS_REPO_TOKEN": "${{ steps.app-token.outputs.token }}"
               }
             }
