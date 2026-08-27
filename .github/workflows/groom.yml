@@ -78,31 +78,41 @@ jobs:
                   section, and an Acceptance Criteria section (a checklist
                   of concrete, testable statements), ending with the line
                   "Original suggestion: dougp13/tdh-feedback#${{ github.event.issue.number }}".
-               b. TEMPORARY ROLLOUT-TESTING RESTRICTION: always target
-                  dougp13/this-dang-house-ios only, regardless of the
-                  "platform" field, even if the request sounds backend-only
-                  or web-only. Note this restriction explicitly in the
-                  groomed issue body (e.g. "routed to iOS repo only during
-                  pipeline rollout testing"). This restriction will be
-                  lifted once the developer agent is verified working in
-                  both target repos — do not lift it yourself.
-               c. Create the issue by running the helper script (do NOT use
-                  `gh issue create` directly for this — you don't have and
-                  don't need the cross-repo token, the script has it):
-                  .github/scripts/create-target-issue.sh dougp13/this-dang-house-ios "<groomed title>" <<'BODY'
+               b. Decide the target repo(s) based on the "platform" field
+                  and the actual content of the request:
+                  - dougp13/this-dang-house-ios: native iOS/SwiftUI app
+                    changes (screens under DangHouse/Features/**, TDHCore
+                    logic, iOS-only behavior).
+                  - dougp13/this-dang-house: the React/Vite web app,
+                    the FastAPI backend, or the marketing site.
+                  - Both, only if the request genuinely needs a
+                    coordinated change (e.g. a new API endpoint plus the
+                    iOS screen that calls it) — in that case create ONE
+                    issue in each repo, and have each one explicitly
+                    cross-reference the other in its body.
+                  If the "platform" field says "Both / not sure" but the
+                  request is clearly scoped to one side (e.g. purely a web
+                  layout tweak with no app-visible behavior), use your own
+                  judgment over the field.
+               c. For each target repo, create the issue by running the
+                  helper script (do NOT use `gh issue create` directly for
+                  this — you don't have and don't need the cross-repo
+                  token, the script has it):
+                  .github/scripts/create-target-issue.sh <target-repo> "<groomed title>" <<'BODY'
                   <groomed spec>
                   BODY
-                  Never pass any repo other than dougp13/this-dang-house-ios
-                  as the script's first argument.
+                  Only ever pass dougp13/this-dang-house-ios or
+                  dougp13/this-dang-house as the script's first argument —
+                  run it twice if you're creating issues in both.
                d. Add the "groomed" label to this original issue and remove
                   "needs-triage":
                   gh issue edit ${{ github.event.issue.number }} --add-label groomed --remove-label needs-triage
-               e. Post one comment on this issue linking to the issue you
+               e. Post one comment on this issue linking to every issue you
                   just created:
-                  gh issue comment ${{ github.event.issue.number }} --body "<link>"
+                  gh issue comment ${{ github.event.issue.number }} --body "<link(s)>"
 
             Never: merge anything, close this issue, delete anything, edit
-            any file in this repository, or create more than 1 issue total
+            any file in this repository, or create more than 2 issues total
             for this one submission.
           claude_args: |
             --max-turns 12
