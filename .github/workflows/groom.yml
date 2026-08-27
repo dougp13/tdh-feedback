@@ -62,18 +62,30 @@ jobs:
                from the issue form: platform, area, summary, problem, proposal,
                alternatives).
 
-            2. Decide if it's clear enough to act on: is the problem concrete,
+            2. Search for likely duplicates before doing anything else:
+               gh issue list --repo dougp13/tdh-feedback --state all --search "<a few keywords from the summary>"
+               Look at the results. If an existing OTHER issue (not this
+               one) is clearly the same request — not just related or
+               similar-sounding, the same underlying ask — then:
+               - Comment linking to it: gh issue comment ${{ github.event.issue.number }} --body "Looks like a duplicate of #<N> — closing this one, follow that issue instead."
+               - gh issue edit ${{ github.event.issue.number }} --add-label duplicate --remove-label needs-triage
+               - gh issue close ${{ github.event.issue.number }}
+               - Stop. Do not groom or create anything.
+               If it's only loosely related, or you're not confident it's
+               the same request, treat it as not a duplicate and continue.
+
+            3. Decide if it's clear enough to act on: is the problem concrete,
                is the desired behavior unambiguous, is there enough detail to
                write acceptance criteria a developer could implement against?
 
-            3. If NOT clear enough:
+            4. If NOT clear enough:
                - Post ONE comment on this issue asking 1-3 specific
                  clarifying questions:
                  gh issue comment ${{ github.event.issue.number }} --body "<questions>"
                - Do not change any labels.
                - Stop. Do not create any issue anywhere.
 
-            4. If clear enough:
+            5. If clear enough:
                a. Write a groomed spec: a short imperative title, a Scope
                   section, and an Acceptance Criteria section (a checklist
                   of concrete, testable statements), ending with the line
@@ -111,13 +123,14 @@ jobs:
                   just created:
                   gh issue comment ${{ github.event.issue.number }} --body "<link(s)>"
 
-            Never: merge anything, close this issue, delete anything, edit
-            any file in this repository, or create more than 2 issues total
+            Never: merge anything, close this issue except via the
+            duplicate step above, delete anything, edit any file in this
+            repository, or create more than 2 issues total
             for this one submission.
           claude_args: |
             --max-turns 12
             --model claude-haiku-4-5-20251001
-            --allowedTools "Bash(gh issue view:*),Bash(gh issue comment:*),Bash(gh issue edit:*),Bash(.github/scripts/create-target-issue.sh:*)"
+            --allowedTools "Bash(gh issue view:*),Bash(gh issue list:*),Bash(gh issue comment:*),Bash(gh issue edit:*),Bash(gh issue close:*),Bash(.github/scripts/create-target-issue.sh:*)"
           settings: |
             {
               "env": {
